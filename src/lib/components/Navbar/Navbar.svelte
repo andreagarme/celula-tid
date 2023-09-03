@@ -1,3 +1,3 @@
-<nav class="bg-red-400">
+<nav class="bg-blue-400">
 	<a href="#">test</a>
 </nav>
