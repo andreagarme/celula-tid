@@ -1,0 +1,36 @@
+<script>
+	import Logo from '$lib/assets/images/logo-sura.svg';
+	import { Button, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
+</script>
+
+<Navbar
+	let:hidden
+	let:toggle
+>
+	<NavBrand href="/">
+		<img
+			src={Logo}
+			class="mr-3 h-6 sm:h-9"
+			alt="Logo Sura"
+		/>
+	</NavBrand>
+
+	<div class="flex md:order-2">
+		<Button size="sm">Inicia Sesión</Button>
+		<NavHamburger on:click={toggle} />
+	</div>
+
+	<NavUl
+		{hidden}
+		class="order-1"
+	>
+		<NavLi
+			href="/"
+			active={true}>Home</NavLi
+		>
+		<NavLi href="/about">About</NavLi>
+		<NavLi href="/docs/components/navbar">Navbar</NavLi>
+		<NavLi href="/pricing">Pricing</NavLi>
+		<NavLi href="/contact">Contact</NavLi>
+	</NavUl>
+</Navbar>

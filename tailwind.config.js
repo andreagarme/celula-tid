@@ -1,27 +1,40 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{html,js,svelte,ts}', './node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}'],
-  darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        // flowbite-svelte
-        primary: {
-          50: '#ffc24c',
-          100: ' #e2e959',
-          200: '#002ba8',
-          300: '#0075ed',
-          400: '#00d3ff',
-          500: '#002ba8',
-          600: '#002ba8',
-          700: '#002ba8',
-          800: '#002ba8',
-          900: '#002ba8'
-    
-        }
-      }
-    },
-  },
-  plugins: [require('flowbite/plugin')],
-}
-
+	content: [
+		'./src/**/*.{html,js,svelte,ts}',
+		'./node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}'
+	],
+	darkMode: 'class',
+	theme: {
+		extend: {
+			container: {
+				center: true
+			},
+			colors: {
+				primary: {
+					100: '#ccd6ec',
+					200: '#99add9',
+					300: '#6685c6',
+					400: '#335cb3',
+					500: '#0033a0',
+					600: '#002980',
+					700: '#001f60',
+					800: '#001440',
+					900: '#000a20'
+				},
+				secondary: {
+					100: '#f9fad4',
+					200: '#f4f6a9',
+					300: '#eef17f',
+					400: '#e9ed54',
+					500: '#e3e829',
+					600: '#b6ba21',
+					700: '#888b19',
+					800: '#5b5d10',
+					900: '#2d2e08'
+				}
+			}
+		}
+	},
+	plugins: [require('flowbite/plugin'), require('@tailwindcss/typography')]
+};

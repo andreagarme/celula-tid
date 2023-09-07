@@ -1,7 +1,9 @@
 <script>
-	import Carousel from '$lib/components/Carousel/Carousel.svelte';
+	import { Hero } from '$lib/components/Hero';
 </script>
 
-<h1>Usuario</h1>
+<Hero
+	backgroundUrl="https://images.pexels.com/photos/17848710/pexels-photo-17848710/free-photo-of-animal-black-portrait-horses.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+/>
 
-<Carousel />
+cuerpo body

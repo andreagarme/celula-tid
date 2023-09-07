@@ -1,0 +1,22 @@
+@import './theme/tailwind/base.pcss';
+@import './theme/tailwind/components.pcss';
+@import './theme/tailwind/utilities.pcss';
+
+@layer base {
+	:root {
+		@apply bg-zinc-50 text-zinc-900;
+
+		&.dark {
+			@apply bg-zinc-900 text-zinc-200;
+		}
+	}
+
+	html,
+	body {
+		@apply h-full;
+	}
+
+	body {
+		@apply text-base font-normal;
+	}
+}
