@@ -51,15 +51,15 @@
 				const resultado = utils.sheet_to_json(libroExcel.Sheets[libroExcel.SheetNames[0]]);
 
 				empleadosImportados = resultado.filter(
-					(item: any) => item.Rol.toLowerCase() === Rol.Empleado,
+					(item: any) => item?.Rol?.toLowerCase() === Rol.Empleado,
 				);
 
 				lideresImportados = resultado.filter(
-					(item: any) => item.Rol.toLowerCase() === Rol.Lider,
+					(item: any) => item?.Rol?.toLowerCase() === Rol.Lider,
 				);
 
 				tercerosImportados = resultado.filter(
-					(item: any) => item.Rol.toLowerCase() === Rol.Tercero,
+					(item: any) => item?.Rol?.toLowerCase() === Rol.Tercero,
 				);
 
 				modalAbierto = true;
