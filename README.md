@@ -1,38 +1,24 @@
-# create-svelte
+# Celula TID
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+[Visita aquí el sitio web](celulatalentohumanoytid.vercel.app)
 
-## Creating a project
+Esta aplicación, desarrollada con SvelteKit, tiene como objetivo simplificar y agilizar las operaciones del área de Talento Humano, con un enfoque específico en Tecnología y Digital (TID). Con esta aplicación, las tareas laboriosas se vuelven más eficientes, permitiendo a los profesionales de recursos humanos gestionar de manera efectiva la documentación, la información del personal y otras actividades relacionadas con TID."
 
-If you're seeing this, you've probably already done this step. Congrats!
+## ⚗️ Características
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+-   [Sveltekit](https://kit.svelte.dev/)
+-   [NPM](https://www.npmjs.com/)
+-   [FlowbiteSvelte](https://flowbite-svelte.com/) como Framework de componentes
+-   [TailwindCSS](https://tailwindcss.com/)
+-   [Exceljs](https://www.npmjs.com/package/exceljs)
+-   [Icones](https://icones.js.org/)
+-   [Documentación con Vitepress](https://vitepress.dev)
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+## 🧙‍♂️ Comandos
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+| Command  | Description         | npm              |
+| -------- | ------------------- | ---------------- |
+| `build`  | Compila el proyecto | `npm run build`  |
+| `dev`    | Ejecuta el proyecto | `npm run dev`    |
+| `lint`   | Ejecuta ESLint      | `npm run lint`   |
+| `format` | Ejecuta prettier    | `npm run format` |

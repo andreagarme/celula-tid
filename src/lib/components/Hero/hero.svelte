@@ -14,8 +14,8 @@
 			<H1 class="text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit.</H1>
 
 			<p class="mt-6 text-xl text-zinc-200">
-				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nobis, nulla maxime enim
-				nostrum officiis libero quas. Nihil veritatis tenetur velit.
+				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nobis, nulla maxime enim nostrum officiis libero quas.
+				Nihil veritatis tenetur velit.
 			</p>
 
 			<Button class="mt-6">Explorar</Button>
