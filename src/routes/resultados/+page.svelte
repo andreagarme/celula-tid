@@ -1,31 +1,23 @@
 <script lang="ts">
-	import { Rol } from '$lib/enums/Rol';
-	import {
-		Alert,
-		Button,
-		Fileupload,
-		Modal,
-		Table,
-		TableBody,
-		TableBodyCell,
-		TableBodyRow,
-		TableHead,
-		TableHeadCell,
-		Toggle,
-	} from 'flowbite-svelte';
-	import { read, utils } from 'xlsx';
+	import Icon from '@iconify/svelte';
+	import exceljs from 'exceljs';
+	import { Accordion, AccordionItem, Alert, Badge, Button, Fileupload, Modal } from 'flowbite-svelte';
+	import { feedback } from './feedback';
 
-	let empleadosImportados: any[] = [];
-	let lideresImportados: any[] = [];
-	let tercerosImportados: any[] = [];
+	type Nivel = 'Junior' | 'Senior' | 'Expert' | 'Master';
 
-	let datosEmpleados: any[] = [];
-	let datosLideres: any[] = [];
-	let datosTerceros: any[] = [];
+	let resultado: Record<string, any>[] = [];
+	let empleadosImportados: Record<string, any>[] = [];
+	let lideresImportados: Record<string, any>[] = [];
+	let tercerosImportados: Record<string, any>[] = [];
 
-	let modalAbierto = true;
-
-	const columnasSeleccionadas: Record<string, boolean> = {};
+	let modalFeedback: {
+		pregunta: string;
+		puntaje: number;
+		color: 'red' | 'yellow' | 'green' | 'blue';
+		descripcion: string;
+	}[] = [];
+	let modalFeedbackAbierto = false;
 
 	/**
 	 * Función asincrónica para procesar los resultados de un evento de entrada, típicamente desencadenado por una carga de archivo.
@@ -39,128 +31,146 @@
 	 * @throws {Error} Lanza un error si hay algún problema durante el procesamiento.
 	 */
 	async function procesarResultados(event: Event) {
-		// Extraer la propiedad 'files' del objetivo del evento, asumiendo que es un HTMLInputElement.
+		// Extraer la propiedad 'files' del target del evento, asumiendo que es un HTMLInputElement.
 		const { files } = event.target as HTMLInputElement;
 
+		if (!files) return;
+
 		try {
-			if (files) {
-				// Leer el archivo Excel seleccionado como una secuencia binaria.
-				const libroExcel = read(await files[0].arrayBuffer(), { type: 'binary' });
+			const libro = new exceljs.Workbook();
+			await libro.xlsx.load(await files[0].arrayBuffer());
+			const hoja = libro.worksheets[0];
 
-				// Convertir la hoja de Excel en un objeto JavaScript (JSON).
-				const resultado = utils.sheet_to_json(libroExcel.Sheets[libroExcel.SheetNames[0]]);
+			hoja.eachRow((row, rowNumber) => {
+				const rowValue: Record<string, any> = {};
 
-				empleadosImportados = resultado.filter(
-					(item: any) => item?.Rol?.toLowerCase() === Rol.Empleado,
-				);
+				row.eachCell((cell, colNumber) => {
+					rowValue[hoja.getRow(2).getCell(colNumber).value as string] = cell.value;
+				});
 
-				lideresImportados = resultado.filter(
-					(item: any) => item?.Rol?.toLowerCase() === Rol.Lider,
-				);
-
-				tercerosImportados = resultado.filter(
-					(item: any) => item?.Rol?.toLowerCase() === Rol.Tercero,
-				);
-
-				modalAbierto = true;
-			}
-		} catch (error) {
-			console.error(`Error al procesar el archivo`, error);
-		}
-	}
-
-	/**
-	 * Función para gestionar la selección de una columna en una interfaz de usuario mediante una casilla de verificación.
-	 *
-	 * Esta función se utiliza para responder a un evento de cambio en una casilla de verificación que representa una columna
-	 * en una interfaz de usuario. Cuando se activa o desactiva la casilla de verificación, esta función actualiza la
-	 * información de selección de columnas en un objeto `columnasSeleccionadas`.
-	 *
-	 * @param {Event} event - El evento que se produce cuando se cambia el estado de la casilla de verificación.
-	 */
-	function seleccionarColumna(event: Event) {
-		const { checked, value } = event.target as HTMLInputElement;
-		columnasSeleccionadas[value] = checked;
-	}
-
-	/**
-	 * Función que filtra las columnas de un conjunto de datos importados según las columnas seleccionadas.
-	 *
-	 * Esta función toma un conjunto de datos importados y filtra las columnas según las columnas seleccionadas en el objeto
-	 * `columnasSeleccionadas`. Crea un nuevo conjunto de datos con solo las columnas seleccionadas y devuelve ese conjunto filtrado.
-	 *
-	 * @param {any[]} datosImportados - El conjunto de datos importados que se desea filtrar.
-	 * @returns {any[]} - Un nuevo conjunto de datos que contiene solo las columnas seleccionadas.
-	 */
-	function filtrarColumnas(datosImportados: any[]) {
-		const filtrado = [];
-
-		for (const dato of datosImportados) {
-			const nuevoDato: Record<string, unknown> = {};
-
-			for (const columna of Object.keys(columnasSeleccionadas)) {
-				if (columnasSeleccionadas[columna]) {
-					nuevoDato[columna] = dato[columna];
+				if (rowNumber !== 2) {
+					resultado.push(rowValue);
 				}
-			}
+			});
 
-			filtrado.push(nuevoDato);
+			empleadosImportados = resultado.filter((item) => item.rol === 'empleado');
+			lideresImportados = resultado.filter((item) => item.rol === 'lider');
+			tercerosImportados = resultado.filter((item) => item.rol === 'tercero');
+		} catch (error) {
+			console.log(error);
+
+			alert(`Error al procesar el archivo ${JSON.stringify(error)}`);
 		}
-
-		return filtrado;
 	}
 
-	/**
-	 * Función que importa y filtra los resultados de diferentes roles.
-	 *
-	 * Esta función se encarga de importar y filtrar los resultados de empleados, líderes y terceros. Utiliza la función
-	 * `filtrarColumnas` para seleccionar las columnas relevantes en cada conjunto de datos y almacena los resultados
-	 * filtrados en variables separadas.
-	 */
-	function importarResultados() {
-		datosEmpleados = filtrarColumnas(empleadosImportados);
-		datosLideres = filtrarColumnas(lideresImportados);
-		datosTerceros = filtrarColumnas(tercerosImportados);
+	function obtenerPreguntas() {
+		return Object.entries(resultado?.[1] ?? []).slice(3);
+	}
 
-		modalAbierto = false;
+	function encontrarRespuesta(usuario: Record<string, any>, pregunta: string) {
+		return Object.entries(usuario).find((entry) => entry[0] === pregunta)?.[1];
+	}
+
+	function calcularPuntaje(respuesta: string) {
+		const puntajes: { [key: string]: number } = {
+			'actualmente no está a su alcance hacerlo': 0,
+			'menos de lo esperado': 1,
+			'solo lo requerido': 2,
+			'mas de lo esperado': 3,
+			'resultados excepcionales y disruptivos': 4,
+		};
+
+		return puntajes[respuesta.toLowerCase().trim()];
+	}
+
+	function calcularNivel({
+		puntaje,
+		categoria,
+	}: {
+		puntaje: number;
+		categoria: 'APORTE' | 'CALIDAD' | 'ALCANCE';
+	}): 'Junior' | 'Senior' | 'Expert' | 'Master' | undefined {
+		const nivelJunior = categoria === 'APORTE' ? [0, 7] : [0, 6];
+		const nivelSenior = categoria === 'APORTE' ? [8, 10] : [7, 8];
+		const nivelExpert = categoria === 'APORTE' ? [11, 13] : [9, 10];
+		const nivelMaster = categoria === 'APORTE' ? [14, 16] : [11, 12];
+
+		if (puntaje >= nivelJunior[0] && puntaje <= nivelJunior[1]) return 'Junior';
+		if (puntaje >= nivelSenior[0] && puntaje <= nivelSenior[1]) return 'Senior';
+		if (puntaje >= nivelExpert[0] && puntaje <= nivelExpert[1]) return 'Expert';
+		if (puntaje >= nivelMaster[0] && puntaje <= nivelMaster[1]) return 'Master';
+	}
+
+	function calcularNivelFinal({
+		nivelAporte,
+		nivelCalidad,
+		nivelAlcance,
+	}: {
+		nivelAporte: Nivel | undefined;
+		nivelCalidad: Nivel | undefined;
+		nivelAlcance: Nivel | undefined;
+	}): Nivel | undefined {
+		const niveles = [nivelAporte, nivelCalidad, nivelAlcance];
+		const conteo: Record<Nivel, number> = { Junior: 0, Senior: 0, Expert: 0, Master: 0 };
+
+		niveles.forEach((nivel) => {
+			if (nivel) {
+				conteo[nivel]++;
+			}
+		});
+
+		if (conteo.Junior === 1 && conteo.Senior === 1 && conteo.Expert === 1) return 'Senior';
+		if (conteo.Junior === 1 && conteo.Senior === 1 && conteo.Master === 1) return 'Senior';
+		if (conteo.Junior === 1 && conteo.Expert === 1 && conteo.Master === 1) return 'Senior';
+		if (conteo.Senior === 1 && conteo.Expert === 1 && conteo.Master === 1) return 'Expert';
+		if (conteo.Junior === 1 && conteo.Junior === 1 && conteo.Junior === 1) return 'Junior';
+		if (conteo.Senior === 1 && conteo.Senior === 1 && conteo.Senior === 1) return 'Senior';
+		if (conteo.Expert === 1 && conteo.Expert === 1 && conteo.Expert === 1) return 'Expert';
+		if (conteo.Master === 1 && conteo.Master === 1 && conteo.Master === 1) return 'Master';
+
+		let maxCount = 0;
+		let maxLevel = undefined;
+
+		for (const nivel in conteo) {
+			if (conteo[nivel as Nivel] > maxCount) {
+				maxCount = conteo[nivel as Nivel];
+				maxLevel = nivel;
+			}
+		}
+
+		return maxLevel as Nivel;
+	}
+
+	function sumarPuntaje(usuario: Record<string, any>, categoria: 'APORTE' | 'CALIDAD' | 'ALCANCE') {
+		let suma = 0;
+
+		const grupo = Object.entries(resultado?.[0] ?? []).filter(([, value]) => value === categoria);
+
+		for (const [key] of grupo) {
+			suma += calcularPuntaje(usuario[key]);
+		}
+
+		return suma;
+	}
+
+	function generarRetroalimentacion(usuario: Record<string, any>) {
+		modalFeedback = [];
+
+		for (const [preguntaClave, pregunta] of obtenerPreguntas()) {
+			const puntaje = calcularPuntaje(usuario[preguntaClave]);
+
+			if (puntaje === 0 || puntaje === 1) {
+				modalFeedback.push({ pregunta, puntaje, color: 'red', descripcion: feedback[preguntaClave][0] });
+			} else if (puntaje === 2) {
+				modalFeedback.push({ pregunta, puntaje, color: 'yellow', descripcion: feedback[preguntaClave][1] });
+			} else if (puntaje === 3) {
+				modalFeedback.push({ pregunta, puntaje, color: 'green', descripcion: feedback[preguntaClave][2] });
+			} else if (puntaje === 4) {
+				modalFeedback.push({ pregunta, puntaje, color: 'blue', descripcion: feedback[preguntaClave][3] });
+			}
+		}
 	}
 </script>
-
-{#if empleadosImportados.length || lideresImportados.length || tercerosImportados.length}
-	<!-- Bind permite hacer doble enlace -->
-	<Modal
-		title="Importar resultados"
-		size="lg"
-		bind:open={modalAbierto}
-	>
-		<ul class="flex flex-col">
-			{#each Object.keys(empleadosImportados?.[0] || lideresImportados?.[0] || tercerosImportados?.[0]) as columna}
-				<li class="flex items-center w-full gap-6 border py-2 px-4 border-gray-500/20">
-					<div class="flex-1">
-						{columna}
-					</div>
-					<div class="flex justify-end">
-						<Toggle
-							bind:value={columna}
-							on:change={seleccionarColumna}
-						/>
-					</div>
-				</li>
-			{/each}
-		</ul>
-
-		<svelte:fragment slot="footer">
-			<div class="flex justify-end w-full">
-				<Button
-					color="primary"
-					on:click={importarResultados}
-				>
-					Importar
-				</Button>
-			</div>
-		</svelte:fragment>
-	</Modal>
-{/if}
 
 <div class="container my-12">
 	<Alert
@@ -168,8 +178,8 @@
 		dismissable
 	>
 		<span class="font-medium">Info alert!</span>
-		Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, molestiae ipsa. A est earum
-		explicabo, dolores accusantium quasi impedit eius.
+		Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore, molestiae ipsa. A est earum explicabo, dolores accusantium
+		quasi impedit eius.
 	</Alert>
 
 	<div class="mt-6 max-w-sm mx-auto">
@@ -182,26 +192,166 @@
 	Las tablas tienen encabezados que corresponden a las claves del primer objeto en el array y filas con celdas para cada valor en los objetos de datos.
 	La clase "mt-12" se utiliza para agregar un margen superior al contenedor.
 	-->
-	{#each [datosEmpleados, datosLideres, datosTerceros] as datos}
-		{#if datos.length}
-			<div class="mt-12">
-				<Table>
-					<TableHead>
-						{#each Object.keys(datos[0]) as columna}
-							<TableHeadCell>{columna}</TableHeadCell>
-						{/each}
-					</TableHead>
-					<TableBody>
-						{#each datos as fila}
-							<TableBodyRow>
-								{#each Object.values(fila) as celda}
-									<TableBodyCell>{celda}</TableBodyCell>
+	<div class="max-w-4xl mx-auto">
+		{#each [empleadosImportados, lideresImportados, tercerosImportados] as roles, index}
+			{#if roles.length}
+				<div class="mt-6">
+					<Accordion>
+						<AccordionItem>
+							<svelte:fragment slot="header">
+								{#if index === 0}
+									Empleados
+								{:else if index === 1}
+									Líderes
+								{:else if index === 2}
+									Terceros
+								{/if}
+
+								({roles.length} usuarios)
+							</svelte:fragment>
+
+							<Accordion>
+								{#each roles as usuario}
+									{@const puntajeAporte = sumarPuntaje(usuario, 'APORTE')}
+									{@const puntajeCalidad = sumarPuntaje(usuario, 'CALIDAD')}
+									{@const puntajeAlcance = sumarPuntaje(usuario, 'ALCANCE')}
+
+									{@const nivelAporte = calcularNivel({ puntaje: puntajeAporte, categoria: 'APORTE' })}
+									{@const nivelCalidad = calcularNivel({ puntaje: puntajeCalidad, categoria: 'CALIDAD' })}
+									{@const nivelAlcance = calcularNivel({ puntaje: puntajeAlcance, categoria: 'ALCANCE' })}
+
+									{@const nivelFinal = calcularNivelFinal({ nivelAporte, nivelCalidad, nivelAlcance })}
+
+									<AccordionItem>
+										<svelte:fragment slot="header">
+											<div class="flex justify-between items-center flex-wrap w-full gap-4 pr-6">
+												<div class="flex gap-3">
+													<div class="flex-shrink-0">
+														<img
+															class="w-8 h-8 rounded-full object-cover"
+															src="https://picsum.photos/200"
+															alt="Neil"
+														/>
+													</div>
+
+													<div class="flex flex-col gap-2">
+														<div class="flex-1 min-w-[300px] truncate">
+															<span
+																class="block text-sm font-medium text-gray-900 truncate dark:text-white"
+															>
+																{usuario.nombre}
+															</span>
+															<span class="block text-sm text-gray-500 truncate dark:text-gray-400">
+																{usuario.email}
+															</span>
+														</div>
+
+														<ul
+															class="list-disc text-sm font-normal md:list-none md:flex md:items-center md:gap-2 md:flex-wrap"
+														>
+															<li>
+																Total Aporte: {puntajeAporte}
+																<span class="font-light">({nivelAporte})</span>
+																<span class="hidden md:inline ml-1.5">•</span>
+															</li>
+
+															<li>
+																Total Calidad: {puntajeCalidad}
+																<span class="font-light">({nivelCalidad})</span>
+																<span class="hidden md:inline ml-1.5">•</span>
+															</li>
+
+															<li>
+																Total Alcance: {puntajeAlcance}
+																<span class="font-light">({nivelAlcance})</span>
+															</li>
+														</ul>
+
+														<div class="shrink-0 mt-4">
+															<Button
+																color="alternative"
+																on:click={(event) => {
+																	event.stopImmediatePropagation();
+																	generarRetroalimentacion(usuario);
+																	modalFeedbackAbierto = true;
+																}}
+															>
+																<Icon
+																	icon="solar:eye-outline"
+																	class="mr-2 text-xl"
+																/>
+
+																Ver retroalimentación
+															</Button>
+														</div>
+													</div>
+												</div>
+
+												<div class="flex">
+													<Badge color="green">
+														{nivelFinal}
+													</Badge>
+												</div>
+											</div>
+										</svelte:fragment>
+
+										{#each obtenerPreguntas() as pregunta, index}
+											<div class="mt-12">
+												<h3 class="font-semibold">
+													{index + 1}. {pregunta[1]}
+												</h3>
+
+												{#if pregunta}
+													{@const respuesta = encontrarRespuesta(usuario, pregunta[0])}
+													{@const puntaje = calcularPuntaje(respuesta)}
+
+													<p class="my-0.5">{respuesta}</p>
+
+													<Badge
+														id="puntaje"
+														color="green"
+													>
+														Puntaje: {puntaje}
+													</Badge>
+												{/if}
+											</div>
+										{/each}
+									</AccordionItem>
 								{/each}
-							</TableBodyRow>
-						{/each}
-					</TableBody>
-				</Table>
-			</div>
-		{/if}
-	{/each}
+							</Accordion>
+						</AccordionItem>
+					</Accordion>
+				</div>
+			{/if}
+		{/each}
+	</div>
 </div>
+
+<Modal
+	title="Retroalimentación"
+	bind:open={modalFeedbackAbierto}
+	autoclose
+>
+	<div class="flex flex-col gap-4">
+		{#each modalFeedback as { pregunta, puntaje, color, descripcion }, index}
+			<Alert
+				class="border-t-4"
+				{color}
+			>
+				<h4 class="font-semibold">{index + 1}. {pregunta}</h4>
+
+				<p class="mt-2">{descripcion}</p>
+
+				<div class="flex items-center justify-between mt-2">
+					<span class="font-semibold">
+						Puntaje: {puntaje}
+					</span>
+				</div>
+			</Alert>
+		{/each}
+	</div>
+
+	<svelte:fragment slot="footer">
+		<Button on:click={() => (modalFeedbackAbierto = false)}>Aceptar</Button>
+	</svelte:fragment>
+</Modal>

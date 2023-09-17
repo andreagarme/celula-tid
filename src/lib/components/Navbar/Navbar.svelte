@@ -1,6 +1,6 @@
 <script>
 	import Logo from '$lib/assets/images/logo-sura.svg';
-	import { Button, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
+	import { DarkMode, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
 </script>
 
 <Navbar
@@ -16,7 +16,7 @@
 	</NavBrand>
 
 	<div class="flex md:order-2">
-		<Button size="sm">Inicia Sesión</Button>
+		<DarkMode size="sm" />
 		<NavHamburger on:click={toggle} />
 	</div>
 
