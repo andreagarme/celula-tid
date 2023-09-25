@@ -6,19 +6,18 @@
 </script>
 
 <div
-	class="h-[600px] bg-no-repeat bg-center bg-cover w-full bg-black/80 bg-blend-soft-light"
+	class="h-[800px] bg-no-repeat bg-center bg-cover w-full bg-black/60 bg-blend-soft-light"
 	style={`background-image: url(${backgroundUrl});`}
 >
 	<div class="container h-full flex items-center">
 		<div class="max-w-md">
-			<H1 class="text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit.</H1>
+			<H1 class="text-white">Ya están listos los resultados de Plan Carrera!</H1>
 
 			<p class="mt-6 text-xl text-zinc-200">
-				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nobis, nulla maxime enim nostrum officiis libero quas.
-				Nihil veritatis tenetur velit.
+				Ingresa para conocer los resultados de las pruebas realizadas a los diseñadores y arquitectos de TID
 			</p>
 
-			<Button class="mt-6">Explorar</Button>
+			<Button class="mt-6"><a href="/planCarrera"> Explorar</a></Button>
 		</div>
 	</div>
 </div>

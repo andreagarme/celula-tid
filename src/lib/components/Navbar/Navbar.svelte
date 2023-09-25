@@ -28,6 +28,6 @@
 			href="/"
 			active={true}>Inicio</NavLi
 		>
-		<NavLi href="/resultados">Resultados</NavLi>
+		<NavLi href="/planCarrera">Plan Carrera</NavLi>
 	</NavUl>
 </Navbar>
