@@ -1,10 +1,11 @@
 <script lang="ts">
+	import video from '$lib/assets/video/arquitectos.mp4';
+	import Banner from '$lib/components/Banner/banner.svelte';
+	import H3 from '$lib/components/H3/H3.svelte';
 	import Icon from '@iconify/svelte';
 	import exceljs from 'exceljs';
 	import { Accordion, AccordionItem, Alert, Badge, Button, Fileupload, Modal } from 'flowbite-svelte';
 	import { feedbackArquitectos } from './arquitectos';
-	import Banner from '$lib/components/Banner/banner.svelte';
-	import H3 from '$lib/components/H3/H3.svelte';
 
 	type Nivel = 'Junior' | 'Senior' | 'Expert' | 'Master';
 
@@ -175,7 +176,7 @@
 </script>
 
 <div>
-	<Banner backgroundUrl="./src/lib/assets/video/arquitectos.mp4" />
+	<Banner backgroundUrl={video} />
 
 	<div class="container mt-24 mb-24 text-center">
 		<div class="prose prose-stone dark:prose-invert prose-lg mx-auto max-w-5xl">
