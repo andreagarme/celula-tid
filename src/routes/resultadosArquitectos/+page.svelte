@@ -1,10 +1,11 @@
 <script lang="ts">
+	import video from '$lib/assets/video/arquitectos.mp4';
+	import Banner from '$lib/components/Banner/banner.svelte';
+	import H3 from '$lib/components/H3/H3.svelte';
 	import Icon from '@iconify/svelte';
 	import exceljs from 'exceljs';
 	import { Accordion, AccordionItem, Alert, Badge, Button, Fileupload, Modal } from 'flowbite-svelte';
 	import { feedbackArquitectos } from './arquitectos';
-	import Banner from '$lib/components/Banner/banner.svelte';
-	import H3 from '$lib/components/H3/H3.svelte';
 
 	type Nivel = 'Junior' | 'Senior' | 'Expert' | 'Master';
 
@@ -175,10 +176,10 @@
 </script>
 
 <div>
-	<Banner backgroundUrl="./src/lib/assets/video/arquitectos.mp4" />
+	<Banner backgroundUrl={video} />
 
 	<div class="container mt-24 mb-24 text-center">
-		<div class="prose prose-stone dark:prose-invert prose-lg mx-auto max-w-5xl">
+		<div class="max-w-5xl mx-auto prose prose-lg prose-stone dark:prose-invert">
 			<H3 class="text-center">Resultados Plan Carrera Arquitectos</H3>
 			<br />
 			<p class="text-justify">
@@ -192,7 +193,7 @@
 
 	<div class="container mt-20 mb-24">
 		<Alert
-			class="prose prose-stone dark:prose-invert prose-lg mx-auto max-w-5xl"
+			class="max-w-5xl mx-auto prose prose-lg prose-stone dark:prose-invert"
 			color="blue"
 			dismissable
 		>
@@ -200,7 +201,7 @@
 			Para ver los resultados de Plan Carrera Arquitectos elige la plantilla correspondiente desde tu computador.
 		</Alert>
 
-		<div class="mt-6 max-w-sm mx-auto">
+		<div class="max-w-sm mx-auto mt-6">
 			<Fileupload on:change={procesarResultados} />
 		</div>
 
@@ -242,11 +243,11 @@
 
 										<AccordionItem>
 											<svelte:fragment slot="header">
-												<div class="flex justify-between items-center flex-wrap w-full gap-4 pr-6">
+												<div class="flex flex-wrap items-center justify-between w-full gap-4 pr-6">
 													<div class="flex gap-3">
 														<div class="flex-shrink-0">
 															<img
-																class="w-8 h-8 rounded-full object-cover"
+																class="object-cover w-8 h-8 rounded-full"
 																src="https://picsum.photos/200"
 																alt="Neil"
 															/>
@@ -267,7 +268,7 @@
 															</div>
 
 															<ul
-																class="list-disc text-sm font-normal md:list-none md:flex md:items-center md:gap-2 md:flex-wrap"
+																class="text-sm font-normal list-disc md:list-none md:flex md:items-center md:gap-2 md:flex-wrap"
 															>
 																<li>
 																	Total Aporte: {puntajeAporte}
@@ -287,7 +288,7 @@
 																</li>
 															</ul>
 
-															<div class="shrink-0 mt-4">
+															<div class="mt-4 shrink-0">
 																<Button
 																	color="alternative"
 																	on:click={(event) => {
