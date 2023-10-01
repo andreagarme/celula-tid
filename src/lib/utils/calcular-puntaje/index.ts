@@ -1,3 +1,5 @@
+import { normalizar } from '../normalize';
+
 /**
  * Esta función calcula el puntaje basado en la respuesta proporcionada.
  *
@@ -17,11 +19,5 @@ export function calcularPuntaje(respuesta: string) {
 		'resultados excepcionales y disruptivos': 4,
 	};
 
-	const respuestaNormalizada = respuesta
-		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.toLowerCase()
-		.trim();
-
-	return puntajes[respuestaNormalizada];
+	return puntajes[normalizar(respuesta).toLowerCase()];
 }

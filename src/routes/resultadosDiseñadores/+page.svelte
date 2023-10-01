@@ -13,13 +13,6 @@
 	let isEmbedded = true; // Valor predeterminado
 	let isLoading = false;
 
-	// Función para manejar el envío del formulario
-	function handleSubmit(event: any) {
-		event.preventDefault();
-		// Aplicar las selecciones del usuario al componente Toolbar
-		// Por ejemplo, puedes actualizar las variables selectedColor e isEmbedded aquí
-	}
-
 	let resultado: Record<string, any>[] = [];
 	let empleadosImportados: Record<string, any>[] = [];
 	let lideresImportados: Record<string, any>[] = [];
