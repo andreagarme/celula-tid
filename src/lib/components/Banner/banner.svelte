@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let backgroundUrl = '';
+	export let backgroundUrl: string;
 </script>
 
 <div class="relative w-full h-full">

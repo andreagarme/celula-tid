@@ -9,7 +9,7 @@
 
 <main class="container mt-24 mb-32">
 	<section>
-		<H2 class="text-center ml-11">¿Quiénes Somos?</H2>
+		<H2 class="text-center">¿Quiénes Somos?</H2>
 
 		<div class="grid grid-cols-1 gap-32 mt-24 xl:grid-cols-2">
 			<div class="prose prose-lg prose-stone dark:prose-invert xl:max-w-xl">
@@ -31,7 +31,7 @@
 	</section>
 
 	<section>
-		<H2 class="mt-32 text-center ml-11">¿Qué Hacemos?</H2>
+		<H2 class="mt-32 text-center">¿Qué Hacemos?</H2>
 
 		<div class="grid grid-cols-1 gap-32 mt-24 xl:grid-cols-2">
 			<div class="prose prose-lg prose-stone dark:prose-invert xl:max-w-xl">

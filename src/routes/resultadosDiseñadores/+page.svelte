@@ -2,28 +2,22 @@
 	import video from '$lib/assets/video/diseñadores.mp4';
 	import Banner from '$lib/components/Banner/banner.svelte';
 	import H3 from '$lib/components/H3/H3.svelte';
-	import H6 from '$lib/components/H6/H6.svelte';
+	import H4 from '$lib/components/H4/H4.svelte';
+	import Resultados from '$lib/components/Resultados/Resultados.svelte';
 	import Icon from '@iconify/svelte';
 	import exceljs from 'exceljs';
-	import { Accordion, AccordionItem, Alert, Badge, Button, Fileupload, Modal, Textarea } from 'flowbite-svelte';
+	import { Accordion, AccordionItem, Alert, Button, Fileupload, Spinner } from 'flowbite-svelte';
 	import { feedbackDiseñadores } from './diseñadores';
-
-	type Nivel = 'Bajo' | 'Senior' | 'Expert';
 
 	let selectedColor = 'blue'; // Valor predeterminado
 	let isEmbedded = true; // Valor predeterminado
-
-	// Función para manejar el envío del formulario
-	function handleSubmit(event: any) {
-		event.preventDefault();
-		// Aplicar las selecciones del usuario al componente Toolbar
-		// Por ejemplo, puedes actualizar las variables selectedColor e isEmbedded aquí
-	}
+	let isLoading = false;
 
 	let resultado: Record<string, any>[] = [];
 	let empleadosImportados: Record<string, any>[] = [];
 	let lideresImportados: Record<string, any>[] = [];
 	let tercerosImportados: Record<string, any>[] = [];
+	let resultadosFinales: Record<string, any>[] = [];
 
 	let modalFeedback: {
 		pregunta: string;
@@ -50,6 +44,8 @@
 
 		if (!files) return;
 
+		isLoading = true;
+
 		try {
 			const libro = new exceljs.Workbook();
 			await libro.xlsx.load(await files[0].arrayBuffer());
@@ -74,6 +70,8 @@
 			console.log(error);
 
 			alert(`Error al procesar el archivo ${JSON.stringify(error)}`);
+		} finally {
+			isLoading = false;
 		}
 	}
 
@@ -95,12 +93,24 @@
 		};
 
 		const respuestaNormalizada = respuesta
-			.normalize('NFD')
+			.normalize()
 			.replace(/[\u0300-\u036f]/g, '')
 			.toLowerCase()
 			.trim();
 
 		return puntajes[respuestaNormalizada];
+	}
+
+	function sumarPuntaje(usuario: Record<string, any>, categoria: 'APORTE' | 'CALIDAD' | 'ALCANCE') {
+		let suma = 0;
+
+		const grupo = Object.entries(resultado?.[0] ?? []).filter(([, value]) => value === categoria);
+
+		for (const [key] of grupo) {
+			suma += calcularPuntaje(usuario[key]);
+		}
+
+		return suma;
 	}
 
 	function calcularNivel({
@@ -118,97 +128,6 @@
 		if (puntaje >= nivelSenior[0] && puntaje <= nivelSenior[1]) return 'Senior';
 		if (puntaje >= nivelExpert[0] && puntaje <= nivelExpert[1]) return 'Expert';
 	}
-
-	function calcularNivelFinal({
-		nivelAporte,
-		nivelCalidad,
-		nivelAlcance,
-	}: {
-		nivelAporte: Nivel | undefined;
-		nivelCalidad: Nivel | undefined;
-		nivelAlcance: Nivel | undefined;
-	}): Nivel | undefined {
-		const niveles = [nivelAporte, nivelCalidad, nivelAlcance];
-		const conteo: Record<Nivel, number> = { Bajo: 0, Senior: 0, Expert: 0 };
-
-		niveles.forEach((nivel) => {
-			if (nivel) {
-				conteo[nivel]++;
-			}
-		});
-
-		if (conteo.Bajo === 1 && conteo.Bajo === 1 && conteo.Bajo === 1) return 'Bajo';
-		if (conteo.Bajo === 1 && conteo.Bajo === 1 && conteo.Senior === 1) return 'Bajo';
-		if (conteo.Bajo === 1 && conteo.Bajo === 1 && conteo.Expert === 1) return 'Bajo';
-		if (conteo.Bajo === 1 && conteo.Senior === 1 && conteo.Bajo === 1) return 'Bajo';
-		if (conteo.Bajo === 1 && conteo.Expert === 1 && conteo.Bajo === 1) return 'Bajo';
-		if (conteo.Expert === 1 && conteo.Bajo === 1 && conteo.Bajo === 1) return 'Bajo';
-		if (conteo.Senior === 1 && conteo.Bajo === 1 && conteo.Bajo === 1) return 'Bajo';
-
-		if (conteo.Bajo === 1 && conteo.Senior === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Bajo === 1 && conteo.Senior === 1 && conteo.Expert === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Bajo === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Senior === 1 && conteo.Bajo === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Senior === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Senior === 1 && conteo.Expert === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Expert === 1 && conteo.Bajo === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Expert === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Expert === 1 && conteo.Bajo === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Expert === 1 && conteo.Senior === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Bajo === 1 && conteo.Senior === 1 && conteo.Expert === 1) return 'Senior';
-		if (conteo.Bajo === 1 && conteo.Expert === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Bajo === 1 && conteo.Expert === 1) return 'Senior';
-		if (conteo.Senior === 1 && conteo.Expert === 1 && conteo.Bajo === 1) return 'Senior';
-		if (conteo.Expert === 1 && conteo.Bajo === 1 && conteo.Senior === 1) return 'Senior';
-		if (conteo.Expert === 1 && conteo.Senior === 1 && conteo.Bajo === 1) return 'Senior';
-
-		if (conteo.Bajo === 1 && conteo.Expert === 1 && conteo.Expert === 1) return 'Expert';
-		if (conteo.Expert === 1 && conteo.Senior === 1 && conteo.Expert === 1) return 'Expert';
-		if (conteo.Expert === 1 && conteo.Bajo === 1 && conteo.Expert === 1) return 'Expert';
-		if (conteo.Senior === 1 && conteo.Expert === 1 && conteo.Expert === 1) return 'Expert';
-		if (conteo.Expert === 1 && conteo.Expert === 1 && conteo.Bajo === 1) return 'Expert';
-		if (conteo.Expert === 1 && conteo.Expert === 1 && conteo.Expert === 1) return 'Expert';
-
-		let maxCount = 0;
-		let maxLevel = undefined;
-
-		for (const nivel in conteo) {
-			if (conteo[nivel as Nivel] > maxCount) {
-				maxCount = conteo[nivel as Nivel];
-				maxLevel = nivel;
-			}
-		}
-
-		return maxLevel as Nivel;
-	}
-
-	function sumarPuntaje(usuario: Record<string, any>, categoria: 'APORTE' | 'CALIDAD' | 'ALCANCE') {
-		let suma = 0;
-
-		const grupo = Object.entries(resultado?.[0] ?? []).filter(([, value]) => value === categoria);
-
-		for (const [key] of grupo) {
-			suma += calcularPuntaje(usuario[key]);
-		}
-
-		return suma;
-	}
-
-	// Función para comparara el nivel menor de los tres evaluadores
-	/*
-	function compararResultadosEmpleado(usuario: Record<string, any>, id, propiedad) {
-		const empleadoEncontrado = empleados.find((empleado) => empleado.id === id);
-
-		if (empleadoEncontrado) {
-			const valorPropiedad = empleadoEncontrado[propiedad];
-			const menorValor = Math.min(...empleados.map((empleado) => empleado[propiedad]));
-			return menorValor;
-		} else {
-			return null;
-		}
-	}*/
-
-	// Función para generar retroalimentación
 
 	function generarRetroalimentacion(usuario: Record<string, any>) {
 		modalFeedback = [];
@@ -259,149 +178,94 @@
 			<Fileupload on:change={procesarResultados} />
 		</div>
 
-		<!-- 
-	Este código realiza la generación dinámica de tablas basadas en diferentes conjuntos de datos.
-	Itera a través de tres arrays diferentes (datosEmpleados, datosLideres, datosTerceros) y crea una tabla para cada array si contiene datos.
-	Las tablas tienen encabezados que corresponden a las claves del primer objeto en el array y filas con celdas para cada valor en los objetos de datos.
-	-->
-		<div class="max-w-4xl mx-auto">
-			{#each [empleadosImportados, lideresImportados, tercerosImportados] as roles, index}
-				{#if roles.length}
-					<div class="mt-6">
-						<Accordion>
-							<AccordionItem>
-								<svelte:fragment slot="header">
-									{#if index === 0}
-										Empleados
-									{:else if index === 1}
-										Líderes
-									{:else if index === 2}
-										Terceros
-									{/if}
+		{#if isLoading}
+			<div class="grid mt-16 place-items-center">
+				<Spinner />
+			</div>
+		{:else}
+			{#if empleadosImportados.length || lideresImportados.length || tercerosImportados.length}
+				<section class="mt-16">
+					<H4 class="mb-4">Resultados por rol</H4>
 
-									({roles.length} usuarios)
-								</svelte:fragment>
-
-								<Accordion>
-									{#each roles as usuario}
-										{@const puntajeAporte = sumarPuntaje(usuario, 'APORTE')}
-										{@const puntajeCalidad = sumarPuntaje(usuario, 'CALIDAD')}
-										{@const puntajeAlcance = sumarPuntaje(usuario, 'ALCANCE')}
-
-										{@const nivelAporte = calcularNivel({ puntaje: puntajeAporte, categoria: 'APORTE' })}
-										{@const nivelCalidad = calcularNivel({ puntaje: puntajeCalidad, categoria: 'CALIDAD' })}
-										{@const nivelAlcance = calcularNivel({ puntaje: puntajeAlcance, categoria: 'ALCANCE' })}
-
-										{@const nivelFinal = calcularNivelFinal({ nivelAporte, nivelCalidad, nivelAlcance })}
-
+					<div class="max-w-4xl mx-auto">
+						{#each [empleadosImportados, lideresImportados, tercerosImportados] as usuarios, index}
+							<!-- <pre class="overflow-auto">{JSON.stringify(usuario)}</pre> -->
+							<!-- {@const puntajeAporte = sumarPuntaje(usuario, 'APORTE')}
+						{@const puntajeCalidad = sumarPuntaje(usuario, 'CALIDAD')}
+						{@const puntajeAlcance = sumarPuntaje(usuario, 'ALCANCE')} -->
+							{#if usuarios.length}
+								<div class="mt-3">
+									<Accordion>
 										<AccordionItem>
 											<svelte:fragment slot="header">
-												<div class="flex flex-wrap items-center justify-between w-full gap-4 pr-6">
-													<div class="flex gap-3">
-														<div class="flex-shrink-0">
-															<img
-																class="object-cover w-8 h-8 rounded-full"
-																src="https://picsum.photos/200"
-																alt="Neil"
-															/>
-														</div>
+												{#if index === 0}
+													Empleados
+												{:else if index === 1}
+													Líderes
+												{:else if index === 2}
+													Terceros
+												{/if}
 
-														<div class="flex flex-col gap-2">
-															<div class="flex-1 min-w-[300px] truncate">
-																<span
-																	class="block text-sm font-medium text-gray-900 truncate dark:text-white"
-																>
-																	{usuario.nombre}
-																</span>
-																<span
-																	class="block text-sm text-gray-500 truncate dark:text-gray-400"
-																>
-																	{usuario.email}
-																</span>
-															</div>
-
-															<ul
-																class="text-sm font-normal list-disc md:list-none md:flex md:items-center md:gap-2 md:flex-wrap"
-															>
-																<li>
-																	Total Aporte: {puntajeAporte}
-																	<span class="font-light">({nivelAporte})</span>
-																	<span class="hidden md:inline ml-1.5">•</span>
-																</li>
-
-																<li>
-																	Total Calidad: {puntajeCalidad}
-																	<span class="font-light">({nivelCalidad})</span>
-																	<span class="hidden md:inline ml-1.5">•</span>
-																</li>
-
-																<li>
-																	Total Alcance: {puntajeAlcance}
-																	<span class="font-light">({nivelAlcance})</span>
-																</li>
-															</ul>
-
-															<div class="mt-4 shrink-0">
-																<Button
-																	color="alternative"
-																	on:click={(event) => {
-																		event.stopImmediatePropagation();
-																		generarRetroalimentacion(usuario);
-																		modalFeedbackAbierto = true;
-																	}}
-																>
-																	<Icon
-																		icon="solar:eye-outline"
-																		class="mr-2 text-xl"
-																	/>
-
-																	Ver retroalimentación
-																</Button>
-															</div>
-														</div>
-													</div>
-
-													<div class="flex">
-														<Badge color="green">
-															{nivelFinal}
-														</Badge>
-													</div>
-												</div>
+												({usuarios.length})
 											</svelte:fragment>
 
-											{#each obtenerPreguntas() as pregunta, index}
-												<div class="mt-12">
-													<h3 class="font-semibold">
-														{index + 1}. {pregunta[1]}
-													</h3>
+											<Resultados
+												{usuarios}
+												tienePuntajeAporte
+												tienePuntajeCalidad
+												tienePuntajeAlcance
+											>
+												<svelte:fragment slot="actions">
+													<Button
+														color="alternative"
+														on:click={(event) => {
+															event.stopImmediatePropagation();
+														}}
+													>
+														<Icon
+															icon="solar:eye-outline"
+															class="mr-2 text-xl"
+														/>
 
-													{#if pregunta}
-														{@const respuesta = encontrarRespuesta(usuario, pregunta[0])}
-														{@const puntaje = calcularPuntaje(respuesta)}
-
-														<p class="my-0.5">{respuesta}</p>
-
-														<Badge
-															id="puntaje"
-															color="green"
-														>
-															Puntaje: {puntaje}
-														</Badge>
-													{/if}
-												</div>
-											{/each}
+														Ver retroalimentación
+													</Button>
+												</svelte:fragment>
+											</Resultados>
 										</AccordionItem>
-									{/each}
-								</Accordion>
-							</AccordionItem>
-						</Accordion>
+									</Accordion>
+								</div>
+							{/if}
+						{/each}
 					</div>
-				{/if}
-			{/each}
-		</div>
+				</section>
+			{/if}
+
+			{#if resultadosFinales.length}
+				<section class="mt-12">
+					<H4 class="mb-4">Resultados finales</H4>
+
+					<Accordion>
+						<AccordionItem>
+							<svelte:fragment slot="header">Resultados finales</svelte:fragment>
+
+							<Resultados
+								usuarios={resultadosFinales}
+								tienePuntajeAporte
+								tienePuntajeCalidad
+								tienePuntajeAlcance
+								tieneNivelAporte
+								tieneNivelCalidad
+								tieneNivelAlcance
+								tieneNivelFinal
+							/>
+						</AccordionItem>
+					</Accordion>
+				</section>
+			{/if}
+		{/if}
 	</div>
 </div>
-
+<!-- 
 <Modal
 	title="Retroalimentación"
 	bind:open={modalFeedbackAbierto}
@@ -467,4 +331,4 @@
 	</label>
 
 	<button type="submit">Guardar</button>
-</form>
+</form> -->

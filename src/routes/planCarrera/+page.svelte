@@ -32,19 +32,21 @@
 		<H4>Resultados 2023</H4>
 		<ul class="mt-10 space-y-1">
 			<li>
-				<a href="/resultadosDiseñadores">
-					<div class="flex items-center">
-						<Icon icon="ph:arrow-right-bold" />
-						<span class="ml-2">Resultados Plan Carrera Diseñadores</span>
-					</div>
+				<a
+					href="/resultadosDiseñadores"
+					class="flex items-center transition-transform hover:translate-x-1 hover:text-primary-600"
+				>
+					<Icon icon="ph:arrow-right-bold" />
+					<span class="ml-2">Resultados Plan Carrera Diseñadores</span>
 				</a>
 			</li>
 			<li>
-				<a href="/resultadosArquitectos">
-					<div class="flex items-center">
-						<Icon icon="ph:arrow-right-bold" />
-						<span class="ml-2">Resultados Plan Carrera Arquitectos</span>
-					</div>
+				<a
+					href="/resultadosArquitectos"
+					class="flex items-center transition-transform hover:translate-x-1 hover:text-primary-600"
+				>
+					<Icon icon="ph:arrow-right-bold" />
+					<span class="ml-2">Resultados Plan Carrera Arquitectos</span>
 				</a>
 			</li>
 		</ul>

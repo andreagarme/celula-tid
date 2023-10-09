@@ -4,7 +4,7 @@
 </script>
 
 <Footer footerType="logo">
-	<div class="sm:flex sm:items-center sm:justify-between container">
+	<div class="container sm:flex sm:items-center sm:justify-between">
 		<FooterBrand
 			src={Logo}
 			alt="Logo Sura"

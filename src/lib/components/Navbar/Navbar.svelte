@@ -10,7 +10,7 @@
 	<NavBrand href="/">
 		<img
 			src={Logo}
-			class="mr-3 h-6 sm:h-9"
+			class="h-6 mr-3 sm:h-9"
 			alt="Logo Sura"
 		/>
 	</NavBrand>
