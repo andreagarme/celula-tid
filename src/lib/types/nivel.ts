@@ -1,1 +1,1 @@
-export type Nivel = 'Bajo' | 'Senior' | 'Expert';
+export type Nivel = 'Bajo' | 'Senior' | 'Expert' | 'Master';
