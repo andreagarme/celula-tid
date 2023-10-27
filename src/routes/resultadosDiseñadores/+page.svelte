@@ -235,7 +235,6 @@
 	<div class="max-w-sm mx-auto mt-6">
 		<Fileupload on:change={procesarArchivoXlsx} />
 	</div>
-
 	{#if diseñadores}
 		<div class="mt-12">
 			<Accordion multiple>
