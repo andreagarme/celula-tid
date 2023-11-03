@@ -7,7 +7,7 @@ Esta aplicación, desarrollada con SvelteKit, tiene como objetivo simplificar y 
 ## ⚗️ Características
 
 -   [Sveltekit](https://kit.svelte.dev/)
--   [NPM](https://www.npmjs.com/)
+-   [PNPM](https://pnpm.io/)
 -   [FlowbiteSvelte](https://flowbite-svelte.com/) como Framework de componentes
 -   [TailwindCSS](https://tailwindcss.com/)
 -   [Exceljs](https://www.npmjs.com/package/exceljs)
@@ -16,9 +16,9 @@ Esta aplicación, desarrollada con SvelteKit, tiene como objetivo simplificar y 
 
 ## 🧙‍♂️ Comandos
 
-| Command  | Description         | npm              |
-| -------- | ------------------- | ---------------- |
-| `build`  | Compila el proyecto | `npm run build`  |
-| `dev`    | Ejecuta el proyecto | `npm run dev`    |
-| `lint`   | Ejecuta ESLint      | `npm run lint`   |
-| `format` | Ejecuta prettier    | `npm run format` |
+| Command  | Description         | pnpm          |
+| -------- | ------------------- | ------------- |
+| `build`  | Compila el proyecto | `pnpm build`  |
+| `dev`    | Ejecuta el proyecto | `pnpm dev`    |
+| `lint`   | Ejecuta ESLint      | `pnpm lint`   |
+| `format` | Ejecuta prettier    | `pnpm format` |

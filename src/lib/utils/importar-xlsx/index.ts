@@ -1,6 +1,7 @@
 import exceljs from 'exceljs';
 
 export function importarXlsx<T extends Record<string, unknown>[]>(file: File, options: { indexEncabezado: number }): Promise<T> {
+	// eslint-disable-next-line no-async-promise-executor
 	return new Promise(async (resolve, reject) => {
 		try {
 			const datosImportados: Record<string, unknown>[] = [];

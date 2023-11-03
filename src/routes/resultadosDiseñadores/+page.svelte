@@ -9,11 +9,12 @@
 	import type { Nivel } from '$lib/types/nivel';
 	import { calcularNivel } from '$lib/utils/calcular-nivel';
 	import { capitalizar } from '$lib/utils/capitalizar';
+	import { exportarXlsx } from '$lib/utils/exportar-xlsx';
 	import { agruparPor } from '$lib/utils/group-by';
 	import { importarXlsx } from '$lib/utils/importar-xlsx';
 	import { normalizar } from '$lib/utils/normalize';
 	import { quitarClaves } from '$lib/utils/quitar-claves';
-	import { Accordion, AccordionItem, Alert, Badge, Fileupload } from 'flowbite-svelte';
+	import { Accordion, AccordionItem, Alert, Badge, Button, Fileupload } from 'flowbite-svelte';
 	import { feedbackDiseñadores } from './diseñadores';
 
 	type DiseñadorConNiveles = Diseñador & {
@@ -205,6 +206,32 @@
 			};
 		}
 	}
+
+	function generarRetroalimentacionCompleta(): Record<string, unknown>[] {
+		const feedback: Record<string, unknown>[] = [];
+
+		for (const diseñador of diseñadores) {
+			const feedbackItem: Record<string, unknown> = {};
+
+			const { evaluador, nivel } = calcularNivelFinal({ evaluadores: diseñador.evaluadores });
+			const preguntas = Object.entries(titulos)
+				.filter(([pregunta]) => pregunta.startsWith('pregunta'))
+				.map(([pregunta]) => pregunta);
+
+			feedbackItem.nivel = nivel;
+			feedbackItem.nombreEmpleado = diseñador.nombreEmpleado;
+			feedbackItem.nombreEvaluador = evaluador.nombreEvaluador;
+
+			for (const pregunta of preguntas) {
+				const { descripcion } = generarRetroalimentacion(evaluador, pregunta) || {};
+				feedbackItem[pregunta] = descripcion;
+			}
+
+			feedback.push(feedbackItem);
+		}
+
+		return feedback;
+	}
 </script>
 
 <div>
@@ -223,6 +250,7 @@
 		</div>
 	</div>
 </div>
+
 <div class="container my-12">
 	<Alert
 		class="max-w-5xl mx-auto prose prose-lg prose-stone dark:prose-invert"
@@ -232,9 +260,11 @@
 		<span class="font-medium"> Bienvenidos!</span>
 		Para ver los resultados de Plan Carrera Diseñadores elige la plantilla correspondiente desde tu computador.
 	</Alert>
+
 	<div class="max-w-sm mx-auto mt-6">
 		<Fileupload on:change={procesarArchivoXlsx} />
 	</div>
+
 	{#if diseñadores}
 		<div class="mt-12">
 			<Accordion multiple>
@@ -360,5 +390,45 @@
 				{/each}
 			</Accordion>
 		</div>
+
+		{#if diseñadores.length}
+			<div class="flex items-center justify-center mt-12">
+				<Button
+					on:click={() => {
+						exportarXlsx({
+							filename: 'Diseñadores',
+							sheets: [
+								{
+									name: 'Resultados',
+									data: diseñadores
+										.flatMap((diseñador) => diseñador.evaluadores)
+										.map((evaluador) => ({
+											...evaluador,
+											puntajePregunta1: calcularPuntaje(evaluador.pregunta1),
+											puntajePregunta2: calcularPuntaje(evaluador.pregunta2),
+											puntajePregunta3: calcularPuntaje(evaluador.pregunta3),
+											puntajePregunta4: calcularPuntaje(evaluador.pregunta4),
+											puntajePregunta5: calcularPuntaje(evaluador.pregunta5),
+											puntajePregunta6: calcularPuntaje(evaluador.pregunta6),
+											puntajePregunta7: calcularPuntaje(evaluador.pregunta7),
+											puntajePregunta8: calcularPuntaje(evaluador.pregunta8),
+											puntajePregunta9: calcularPuntaje(evaluador.pregunta9),
+											puntajePregunta10: calcularPuntaje(evaluador.pregunta10),
+											totalPuntaje:
+												evaluador.puntajeAporte + evaluador.puntajeCalidad + evaluador.puntajeAlcance,
+										})),
+								},
+								{
+									name: 'Retroalimentación',
+									data: generarRetroalimentacionCompleta(),
+								},
+							],
+						});
+					}}
+				>
+					Exportar
+				</Button>
+			</div>
+		{/if}
 	{/if}
 </div>
