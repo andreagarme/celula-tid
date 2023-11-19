@@ -118,17 +118,10 @@
 		const nivelAporte = calcularNivelPuntaje({ puntaje: puntajeAporte, categoria: 'APORTE' })!;
 		const nivelCalidad = calcularNivelPuntaje({ puntaje: puntajeCalidad, categoria: 'CALIDAD' })!;
 		const nivelAlcance = calcularNivelPuntaje({ puntaje: puntajeAlcance as number, categoria: 'ALCANCE' })!;
-		const nivelTotal = calcularNivel(
-			(frecuencia) =>
-				frecuencia['Bajo'] === 1 &&
-				frecuencia['Senior'] === 1 &&
-				frecuencia['Expert'] === 1 &&
-				frecuencia['Master'] === 1,
-			{
-				niveles: [nivelAporte, nivelCalidad, nivelAlcance],
-				nivelPorDefecto: 'Senior',
-			},
-		);
+		const nivelTotal = calcularNivel((frecuencia) => Object.values(frecuencia).every((f) => f === 1), {
+			niveles: [nivelAporte, nivelCalidad, nivelAlcance],
+			nivelPorDefecto: 'Senior',
+		});
 
 		return {
 			puntajeAporte,
@@ -242,6 +235,10 @@
 		return feedback;
 	}
 </script>
+
+<svelte:head>
+	<title>Resultados Arquitectos</title>
+</svelte:head>
 
 <div>
 	<Banner backgroundUrl={video} />

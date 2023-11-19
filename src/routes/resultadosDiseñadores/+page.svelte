@@ -17,6 +17,8 @@
 	import { Accordion, AccordionItem, Alert, Badge, Button, Fileupload } from 'flowbite-svelte';
 	import { feedbackDiseñadores } from './diseñadores';
 
+	// Creación de tipos de las variables a utilizar en el código
+
 	type DiseñadorConNiveles = Diseñador & {
 		nivelAlcance: Nivel;
 		nivelAporte: Nivel;
@@ -31,9 +33,15 @@
 		evaluadores: DiseñadorConNiveles[];
 	};
 
+	//Creación de las variables y asignación de los tipos
+
 	let categorias: EvaluadorCategorias;
 	let titulos: DiseñadorTitulos;
 	let diseñadores: DatosDiseñador[] = [];
+
+	// Función para importar una plantilla de excel y extraer los datos. Usa una utilidad (helper o función genérica) llamada importarXLsx
+	// Files está desestructurada (extraer la propiedad de un objeto o arreglo y convertirla en una variable) de la propiedad target de Event.
+	// as es un type coercion, es decir convierte lo que está antes de el, siempre y cuando sean compatibles por ej date a string, pero de objeto a booleano no lo es.
 
 	async function procesarArchivoXlsx(event: Event) {
 		try {
@@ -116,13 +124,10 @@
 		const nivelAporte = calcularNivelPuntaje({ puntaje: puntajeAporte, categoria: 'APORTE' })!;
 		const nivelCalidad = calcularNivelPuntaje({ puntaje: puntajeCalidad, categoria: 'CALIDAD' })!;
 		const nivelAlcance = calcularNivelPuntaje({ puntaje: puntajeAlcance as number, categoria: 'ALCANCE' })!;
-		const nivelTotal = calcularNivel(
-			(frecuencia) => frecuencia['Bajo'] === 1 && frecuencia['Senior'] === 1 && frecuencia['Expert'] === 1,
-			{
-				niveles: [nivelAporte, nivelCalidad, nivelAlcance],
-				nivelPorDefecto: 'Senior',
-			},
-		);
+		const nivelTotal = calcularNivel((frecuencia) => Object.values(frecuencia).every((f) => f === 1), {
+			niveles: [nivelAporte, nivelCalidad, nivelAlcance],
+			nivelPorDefecto: 'Senior',
+		});
 
 		return {
 			puntajeAporte,
@@ -233,6 +238,10 @@
 		return feedback;
 	}
 </script>
+
+<svelte:head>
+	<title>Resultados diseñadores</title>
+</svelte:head>
 
 <div>
 	<Banner backgroundUrl={video} />

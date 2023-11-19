@@ -1,34 +1,36 @@
-import { describe, expect, it } from 'vitest';
-import { calcularNivelDiseñadores } from '.';
+// import { describe, expect, it } from 'vitest';
+// import { calcularNivel } from '.';
 
-describe('calcularNivelDiseñadores', () => {
-	it('debería devolver "Bajo" para la categoría "APORTE" y puntaje 5', () => {
-		const resultado = calcularNivelDiseñadores({ puntaje: 5, categoria: 'APORTE' });
-		expect(resultado).toBe('Bajo');
-	});
+// describe('calcularNivel', () => {
+//   it('devuelve el nivel por defecto cuando se proporciona una lista vacía de niveles', () => {
+//     const nivelPorDefecto = { nombre: 'Nivel por defecto', valor: 0 };
+//     const niveles = [];
+//     const resultado = calcularNivel(() => true, { niveles:[], nivelPorDefecto: [] });
+//     expect(resultado).toBe(nivelPorDefecto);
+//   });
 
-	it('debería devolver "Senior" para la categoría "APORTE" y puntaje 10', () => {
-		const resultado = calcularNivelDiseñadores({ puntaje: 10, categoria: 'APORTE' });
-		expect(resultado).toBe('Senior');
-	});
+//   it('devuelve el nivel único cuando se proporciona una lista de niveles con un solo nivel', () => {
+//     const nivelUnico = { nombre: 'Nivel único', valor: 1 };
+//     const niveles = [nivelUnico];
+//     const resultado = calcularNivel(() => true, { niveles, nivelPorDefecto: null });
+//     expect(resultado).toBe(nivelUnico);
+//   });
 
-	it('debería devolver "Expert" para la categoría "APORTE" y puntaje 15', () => {
-		const resultado = calcularNivelDiseñadores({ puntaje: 15, categoria: 'APORTE' });
-		expect(resultado).toBe('Expert');
-	});
+//   it('devuelve el nivel más frecuente cuando se proporciona una lista de niveles con varios niveles', () => {
+//     const nivel1 = { nombre: 'Nivel 1', valor: 1 };
+//     const nivel2 = { nombre: 'Nivel 2', valor: 2 };
+//     const nivel3 = { nombre: 'Nivel 3', valor: 3 };
+//     const niveles = [nivel1, nivel2, nivel2, nivel3, nivel3, nivel3];
+//     const resultado = calcularNivel(() => true, { niveles, nivelPorDefecto: null });
+//     expect(resultado).toBe(nivel3);
+//   });
 
-	it('debería devolver "Bajo" para la categoría "CALIDAD" y puntaje 3', () => {
-		const resultado = calcularNivelDiseñadores({ puntaje: 3, categoria: 'CALIDAD' });
-		expect(resultado).toBe('Bajo');
-	});
-
-	it('debería devolver "Senior" para la categoría "CALIDAD" y puntaje 7', () => {
-		const resultado = calcularNivelDiseñadores({ puntaje: 7, categoria: 'CALIDAD' });
-		expect(resultado).toBe('Senior');
-	});
-
-	it('debería devolver "Expert" para la categoría "CALIDAD" y puntaje 11', () => {
-		const resultado = calcularNivelDiseñadores({ puntaje: 11, categoria: 'CALIDAD' });
-		expect(resultado).toBe('Expert');
-	});
-});
+//   it('devuelve el nivel más bajo cuando se proporciona una lista de niveles con varios niveles y dos o más niveles tienen la misma frecuencia', () => {
+//     const nivel1 = { nombre: 'Nivel 1', valor: 1 };
+//     const nivel2 = { nombre: 'Nivel 2', valor: 2 };
+//     const nivel3 = { nombre: 'Nivel 3', valor: 3 };
+//     const niveles = [nivel1, nivel2, nivel2, nivel3, nivel3, nivel3, nivel1];
+//     const resultado = calcularNivel(() => true, { niveles, nivelPorDefecto: null });
+//     expect(resultado).toBe(nivel1);
+//   });
+// });

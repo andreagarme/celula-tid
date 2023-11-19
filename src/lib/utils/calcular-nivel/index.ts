@@ -25,7 +25,7 @@ export function calcularNivel(
 	} else {
 		let maxFrecuencia = 0;
 		let media;
-		for (let nivel in frecuencia) {
+		for (const nivel in frecuencia) {
 			if (frecuencia[nivel] > maxFrecuencia) {
 				maxFrecuencia = frecuencia[nivel];
 				media = nivel;

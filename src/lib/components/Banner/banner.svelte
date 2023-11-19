@@ -2,6 +2,8 @@
 	export let backgroundUrl: string;
 </script>
 
+<!-- Se agrega el prop backgroundUrl para poder modificar los videos en las distintas páginas -->
+
 <div class="relative w-full h-full">
 	<video
 		class="w-full h-[700px] object-cover"
