@@ -12,7 +12,6 @@ Esta aplicación, desarrollada con SvelteKit, tiene como objetivo simplificar y 
 -   [TailwindCSS](https://tailwindcss.com/)
 -   [Exceljs](https://www.npmjs.com/package/exceljs)
 -   [Icones](https://icones.js.org/)
--   [Documentación con Vitepress](https://vitepress.dev)
 
 ## 🧙‍♂️ Comandos
 
